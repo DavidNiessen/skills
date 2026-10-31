@@ -49,7 +49,7 @@ Classify findings:
 - **Missing grid:** Report separately. Any requested analysis command may write data and must follow the mutation workflow.
 - **Ambiguous:** Conflicting kick/percussion evidence, half-beat alternatives, or insufficient rhythm. Leave unchanged unless further evidence resolves it.
 
-Use confidence and tolerance appropriate to the recording. A conservative initial fixed-offset threshold is about 20 ms, with repeated agreement across sections; this is a triage threshold, not a guarantee that smaller errors are acceptable. Do not certify musical downbeat/bar numbering from transient phase alone.
+Use confidence and tolerance appropriate to the recording. A conservative initial fixed-offset threshold is about 5 ms, with repeated agreement across sections; this is a triage threshold, not a guarantee that smaller errors are acceptable. Do not certify musical downbeat/bar numbering from transient phase alone.
 
 ## Calculate and validate corrections
 
