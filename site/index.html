@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="description" content="Reusable AI skills by {{OWNER}}. Browse the collection, read the instructions, and install with a single command.">
+  <title>Skills — {{OWNER}}</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a href="#collection" class="skip-link">Skip to skills</a>
+  <header class="header"><nav class="shell nav" aria-label="Main navigation">
+    <a href="./" class="brand" aria-label="Skills home"><svg aria-hidden="true" viewBox="0 0 28 28"><path d="m9 7-7 7 7 7M19 7l7 7-7 7M16 4l-4 20"/></svg>skills<span class="brand-period">.</span></a>
+    <a href="{{REPOSITORY_URL}}" class="nav-link">View on GitHub <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"/></svg></a>
+  </nav></header>
+  <main class="shell">
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="intro-copy"><h1 id="intro-title">A little know-how.<br><span>A lot more possibility.</span></h1>
+      <p>Reusable skills for your AI agents.<br>Find a workflow. Make it yours.</p></div>
+      <div class="install-panel" aria-labelledby="install-title">
+        <div class="panel-top"><h2 id="install-title">One command to get started</h2><span class="terminal-label" aria-hidden="true">terminal</span></div>
+        <div class="command-line"><span aria-hidden="true" class="prompt">$</span><code>{{COMMAND}}</code><button class="icon-button" data-copy="{{COMMAND}}" aria-label="Copy collection install command">{{COPY_ICON}}</button></div>
+        <p>Choose the skills and agents during installation.</p>
+      </div>
+    </section>
+    <section id="collection" class="collection" aria-labelledby="collection-title">
+      <div class="collection-top"><div class="collection-label"><h2 id="collection-title">The collection</h2><span class="count" id="total-count">{{COUNT}}</span></div>
+        <label class="search" data-enhance hidden><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Find a skill…" aria-label="Search skills" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
+      </div>
+      <div class="collection-tools" data-enhance hidden><div class="filters" role="group" aria-label="Filter skills by category"><button type="button" class="filter" data-category-filter="all" aria-pressed="true">All skills</button>{{FILTERS}}</div><p class="result-count" id="result-count" aria-live="polite">{{COUNT}} {{SKILL_WORD}}</p></div>
+      <div class="skill-list" id="skill-list">{{SKILLS}}</div>
+      <div id="empty" class="empty" hidden><h3>No skills found</h3><p>Try another search or browse the full collection.</p><button type="button" id="clear-search" class="button">Clear filters</button></div>
+    </section>
+    <section class="about" aria-labelledby="about-title"><h2 id="about-title">Good workflows,<br>ready to share.</h2><div><p>A skill gives an agent a focused set of instructions for a specific task. Read the source to see how it works, then add it to your setup.</p><a class="text-link" href="{{REPOSITORY_URL}}#adding-a-skill">Add a skill to the collection <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="shell footer"><a href="https://github.com/{{OWNER}}">{{OWNER}}</a><div><a href="{{REPOSITORY_URL}}/blob/main/LICENSE">MIT License</a><a href="./skills.json">Catalog JSON</a><a href="https://github.com/vercel-labs/skills">Built for skills <span aria-hidden="true">↗</span></a></div></footer>
+  <div id="toast" role="status" aria-live="polite" class="toast"></div>
+</body>
+</html>

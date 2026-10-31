@@ -1,0 +1,14 @@
+{
+  "name": "david-niessen-skills",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable AI skills and their automatically generated catalog.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "preview": "node scripts/serve.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": { "yaml": "^2.8.1", "@fontsource-variable/manrope": "^5.2.8" }
+}
