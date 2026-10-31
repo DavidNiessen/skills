@@ -49,11 +49,11 @@ Classify findings:
 - **Missing grid:** Report separately. Any requested analysis command may write data and must follow the mutation workflow.
 - **Ambiguous:** Conflicting kick/percussion evidence, half-beat alternatives, or insufficient rhythm. Leave unchanged unless further evidence resolves it.
 
-Use confidence and tolerance appropriate to the recording. A conservative initial fixed-offset threshold is about 5 ms, with repeated agreement across sections; this is a triage threshold, not a guarantee that smaller errors are acceptable. Do not certify musical downbeat/bar numbering from transient phase alone.
+Use confidence and tolerance appropriate to the recording. Use 5 ms as an initial screening threshold with repeated agreement across sections, not as proof of a broken grid: it can overlap onset-detection uncertainty. Review near-threshold cases before proposing edits. Do not certify musical downbeat/bar numbering from transient phase alone.
 
 ## Calculate and validate corrections
 
-For a fixed offset, shift the relevant marker times by the robust measured residual while retaining tempo and beat/bar identity. Do not produce negative marker times; examine the first attack and preserve grid numbering rather than blindly wrapping to another beat.
+For a fixed offset, shift the relevant marker times by the robust measured residual while retaining tempo and beat/bar phase. Calculate the desired anchor before adjusting it for API limits; never clamp a negative anchor to zero, because that can leave the timing error unresolved.
 
 For linear drift, fit `residual(t) = c + s*t`, with seconds throughout. A useful initial correction is:
 
@@ -61,6 +61,22 @@ For linear drift, fit `residual(t) = c + s*t`, with seconds throughout. A useful
 new_bpm = old_bpm / (1 + s)
 new_anchor = old_anchor * (1 + s) + c
 ```
+
+### Normalize anchors and validate the whole batch
+
+Lexicon enforces runtime limits that may be absent from the published schema: every tempo-marker `startTime` must be finite numeric seconds in **[0, 86400]**, inclusive, and marker BPM must be finite and positive. Validate the actual serialized values after rounding, including unchanged markers sent back in a replacement array. Do this for every proposed track **before** saving a change plan; a valid-looking preview does not prove Lexicon will accept the write.
+
+For a negative corrected anchor in a constant-tempo segment with confirmed meter, move the anchor forward by the smallest whole number of bars that makes it nonnegative:
+
+```text
+bar_seconds = beats_per_bar * 60 / new_bpm
+bars_forward = ceil(-corrected_anchor / bar_seconds)
+supported_anchor = corrected_anchor + bars_forward * bar_seconds
+```
+
+Apply this only when `corrected_anchor < 0`; leave an already valid anchor unchanged. For confirmed 4/4, `bar_seconds = 240 / new_bpm`. At 160 BPM, an anchor of `-0.0245` seconds becomes `1.4755` seconds after adding one 1.5-second bar. This preserves the beat and downbeat phase of the constant-tempo lattice, but absolute bar numbering may change; do not claim numbering is unchanged.
+
+Do not assume 4/4 when meter is uncertain, shift by a single beat just to satisfy the API, or wrap a marker blindly within a variable-tempo grid. Resolve the meter and segment semantics first, or leave the case for review. Preserve marker data and chronological segment boundaries; do not move an anchor across another tempo change or beyond the available audio. Recheck the introductory grid coverage as well as later beats after relocating an anchor. If no supported equivalent anchor satisfies these constraints, omit that correction and explain why.
 
 Validate the proposed grid against the audio again, including late sections. Reject a correction that improves only one excerpt or has poor fit coverage. Report realistic precision; decimal places do not imply audio certainty.
 
