@@ -90,7 +90,7 @@ rs build --mock --out /tmp/readme-preview
 2. **Files to commit:** `readme.config.json` and `.github/workflows/readme.yml`, plus the README:
    - **Profile repositories:** `rs build --mock --out /tmp/rs --readme README.md` writes a README that references the asset branch. Links that depend on data (pinned project cards) point at sample repositories until the first workflow run rewrites the README with real data, and the images appear with that run.
    - **Project repositories:** replacing `README.md` replaces the docs a project lives by. Show the user the diff and get a yes first. Alternatively, let the first workflow run write the README.
-3. **Branch and PR:** commit on a branch and open a pull request unless told otherwise. The workflow does not publish from pull requests: it renders only.
+3. **Branch and PR:** commit on a branch and open a pull request unless told otherwise. Only the default branch publishes. Pushes to other branches and pull requests render only, so the live README keeps its images until the merge.
 4. **Tell the user what only they can do:**
    - **Settings → Actions → General → Workflow permissions → Read and write permissions.** Without it, the push to the asset branch fails with 403.
    - Run the **readme** workflow once from the Actions tab after merging.
