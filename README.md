@@ -29,6 +29,11 @@ Requires Node.js and npm. The [skills CLI documentation](https://github.com/verc
 ```text
 skills/
   dev/
+    open-source-ready/
+      SKILL.md
+      templates/
+    readme-studio/
+      SKILL.md
     release-pipeline/
       SKILL.md
       templates/

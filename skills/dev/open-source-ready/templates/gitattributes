@@ -1,0 +1,11 @@
+# Copy to .gitattributes and adapt the generated paths.
+* text=auto eol=lf
+
+# Generated files: collapsed in diffs and left out of the language statistics.
+<dist>/** linguist-generated=true
+<generated data paths> linguist-generated=true
+
+# Binary assets
+*.png binary
+*.woff2 binary
+*.wasm binary
