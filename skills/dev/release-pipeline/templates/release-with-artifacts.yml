@@ -1,0 +1,137 @@
+# A full release with build artifacts, started by hand (Actions › Release › Run workflow).
+# It checks main, raises the version, tags it, builds every target from that tag, uploads the
+# builds to a draft release, publishes it and brings main up to the new version.
+#
+# The raised version reaches main only once every build has passed: until then it lives on the
+# release's tag alone. If a build fails (or the run is cancelled), the draft release and its tag are
+# taken away again, so main keeps its version and the next run makes the same one. Should bringing
+# main up to the release fail (main changed the version lines meanwhile), fix main and use
+# "Re-run failed jobs": the builds are kept.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Which part of the version to raise
+        type: choice
+        options: [patch, minor, major]
+        default: minor
+      version:
+        description: Or an exact version (e.g. 1.0.0); overrides the bump
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ci.yml
+
+  prepare:
+    name: Version, tag and draft
+    needs: checks
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        env:
+          BUMP: ${{ inputs.bump }}
+          EXACT: ${{ inputs.version }}
+        run: |
+          current=$(node -p "require('./package.json').version")
+          IFS=. read -r major minor patch <<< "${current%%-*}"
+          if [ -n "$EXACT" ]; then version="${EXACT#v}"
+          elif [ "$BUMP" = major ]; then version="$((major + 1)).0.0"
+          elif [ "$BUMP" = minor ]; then version="${major}.$((minor + 1)).0"
+          else version="${major}.${minor}.$((patch + 1))"; fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "::error::$version is not a release version (x.y.z)"; exit 1; fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then echo "::error::v$version exists already"; exit 1; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      # The version commit goes to the tag only; main gets it once the builds have passed (publish).
+      - name: Commit the version and tag it
+        run: |
+          node scripts/set-version.mjs "${{ steps.v.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): v${{ steps.v.outputs.version }} [skip ci]"
+          git tag "v${{ steps.v.outputs.version }}"
+          git push origin "v${{ steps.v.outputs.version }}"
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "v${{ steps.v.outputs.version }}" --draft --verify-tag --generate-notes --title "<APP NAME> ${{ steps.v.outputs.version }}"
+
+  build:
+    name: Build (${{ matrix.name }})
+    needs: prepare
+    strategy:
+      fail-fast: true
+      matrix:
+        # Adapt: your targets.
+        include:
+          - name: Linux
+            os: ubuntu-latest
+          - name: macOS
+            os: macos-latest
+          - name: Windows
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.prepare.outputs.version }}
+      # Adapt: set up the toolchain, build, then upload. Toolchain release actions can upload to the
+      # draft directly (e.g. tauri-action with releaseId).
+      - name: Build
+        shell: bash
+        run: echo "build here, producing files in dist/"
+      - name: Upload to the draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "v${{ needs.prepare.outputs.version }}" dist/* --clobber
+
+  publish:
+    name: Publish the release
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      # Every build passed: main takes the version. Straight onto the tag when main has not moved
+      # since; otherwise the tag's version commit is merged in.
+      - name: Bring main up to the release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "refs/tags/v$VERSION:refs/tags/v$VERSION"
+          git merge --ff-only "v$VERSION" || git merge --no-ff --no-edit -m "chore(release): v$VERSION into main [skip ci]" "v$VERSION"
+          git push origin HEAD:main
+      - run: gh release edit "v$VERSION" --draft=false --latest
+
+  cleanup:
+    name: Take back a release whose build failed
+    needs: [prepare, build]
+    # Only after the tag and draft were made, and whenever the builds did not all pass: failed,
+    # stopped, or cancelled by GitHub (which neither failure() nor cancelled() notices on its own).
+    if: always() && needs.prepare.result == 'success' && needs.build.result != 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release delete "v${{ needs.prepare.outputs.version }}" --yes --cleanup-tag

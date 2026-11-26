@@ -28,10 +28,13 @@ Requires Node.js and npm. The [skills CLI documentation](https://github.com/verc
 
 ```text
 skills/
+  dev/
+    release-pipeline/
+      SKILL.md
+      templates/
   dj/
     lexicon-beatgrid-repair/
       SKILL.md
-  # dev/<skill-name>/SKILL.md can be added later
 ```
 
 The CLI supports category folders under `skills/`, up to three directory levels: `skills/<name>/`, `skills/<category>/<name>/`, or `skills/<category>/<subcategory>/<name>/`. Install by the frontmatter `name`, regardless of category. Do not place a `SKILL.md` at a category root: it would shadow its child skills.
