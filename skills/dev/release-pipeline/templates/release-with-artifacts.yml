@@ -61,7 +61,8 @@ jobs:
           node scripts/set-version.mjs "${{ steps.v.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore(release): v${{ steps.v.outputs.version }} [skip ci]"
+          # The first release can match the version already on main: then there is nothing to commit.
+          if git diff --quiet; then echo "version is already ${{ steps.v.outputs.version }}"; else git commit -am "chore(release): v${{ steps.v.outputs.version }} [skip ci]"; fi
           git tag "v${{ steps.v.outputs.version }}"
           git push origin "v${{ steps.v.outputs.version }}"
       - name: Draft the release
