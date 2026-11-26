@@ -1,0 +1,76 @@
+# Every push to main: run the checks and publish a GitHub pre-release
+# (version: the next patch with the run number, e.g. 1.4.1-57). Pre-releases are for trying the
+# newest work. They are never marked latest and never move floating tags (v1); only a full
+# release (release.yml) does that. Only the newest few pre-releases are kept.
+name: Pre-release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prerelease
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  version:
+    name: Pick the version
+    needs: checks
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      # Adapt: read the base version from wherever it lives (package.json, Cargo.toml, VERSION…).
+      - id: v
+        run: |
+          base=$(node -p "require('./package.json').version")
+          IFS=. read -r major minor patch <<< "${base%%-*}"
+          echo "version=${major}.${minor}.$((patch + 1))-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish the pre-release
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      # Adapt: if the release ships builds, run a build matrix job before this one that calls
+      # `node scripts/set-version.mjs "$VERSION"`, builds, and uploads the files with
+      # `gh release upload "v$VERSION" <files>` after this job created the release (or use the
+      # release action of your toolchain, e.g. tauri-action with prerelease: true).
+      - name: Create the pre-release
+        run: |
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "<APP NAME> $VERSION (pre-release)" \
+            --generate-notes
+
+  tidy:
+    name: Keep the newest pre-releases
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release list --limit 100 --json tagName,isPrerelease,createdAt \
+            --jq '[.[] | select(.isPrerelease)] | sort_by(.createdAt) | reverse | .[3:] | .[].tagName' |
+          while read -r tag; do
+            gh release delete "$tag" --yes --cleanup-tag
+          done

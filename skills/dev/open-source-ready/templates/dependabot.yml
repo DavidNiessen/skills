@@ -1,0 +1,21 @@
+# Keeps dependencies current: one grouped pull request per ecosystem each week.
+version: 2
+updates:
+  - package-ecosystem: <npm | cargo | pip | gomod | docker | …>
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      deps:
+        patterns: ["*"]
+    # ignore:
+    #   # <why this dependency is moved by hand>
+    #   - dependency-name: <name>
+    #     update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

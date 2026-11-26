@@ -1,0 +1,19 @@
+# Top of .github/workflows/ci.yml: keep your existing jobs below this header.
+# Runs on pull requests, and is called by prerelease.yml and release.yml before they publish.
+name: ci
+
+on:
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# github.workflow is the *caller's* name when called, so a release never cancels its own checks.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ... your existing CI jobs ...
