@@ -6,6 +6,31 @@ Reusable AI skills by [David Niessen](https://github.com/DavidNiessen).
 
 ## Install
 
+### Claude Code plugin marketplace
+
+Add the marketplace, then install the plugin for the category you want:
+
+```text
+/plugin marketplace add DavidNiessen/skills
+/plugin install dev@davidniessen-skills
+/plugin install dj@davidniessen-skills
+```
+
+On Claude Code 2.1.275 or later, one line does both:
+
+```text
+/plugin install dev --marketplace DavidNiessen/skills
+```
+
+| Plugin | Skills |
+| --- | --- |
+| `dev` | `open-source-ready`, `readme-studio`, `release-pipeline` |
+| `dj` | `lexicon-beatgrid-repair`, `lexicon-cuepoints`, `lexicon-library-cleanup` |
+
+Plugin skills are namespaced, for example `/dev:release-pipeline`. Update with `/plugin marketplace update davidniessen-skills`. Plugins carry no fixed version, so every new commit on `main` is an update.
+
+### skills CLI (any agent)
+
 ```sh
 npx skills add DavidNiessen/skills
 ```
@@ -57,10 +82,11 @@ The CLI supports category folders under `skills/`, up to three directory levels:
    ```
 
 3. Write the skill's instructions below the frontmatter. Keep supporting scripts and references in the skill's folder.
-4. Run `npm ci`, `npm test`, `npm run build`, and optionally `npx skills add . --list`.
-5. Push to `main`. GitHub Actions rebuilds and deploys the catalog automatically.
+4. Add the skill folder to its category's plugin in `.claude-plugin/marketplace.json` (`skills/dev/code-review` goes into the `dev` plugin's `skills` list). A new category needs a new plugin entry with `"source": "./"` and `"strict": false`. `npm test` fails when the manifest and the skills folder disagree.
+5. Run `npm ci`, `npm test`, `npm run build`, and optionally `npx skills add . --list` and `claude plugin validate .`.
+6. Push to `main`. GitHub Actions rebuilds and deploys the catalog automatically.
 
-No catalog entries need editing. The build reads every discoverable `SKILL.md`, validates YAML and unique names, and derives categories, descriptions, source links, counts, filters, and install commands. Optional `metadata.display-name` overrides the automatically formatted title. Internal skills (`metadata.internal: true`) are excluded from the public catalog, following the CLI's default discovery behavior; their files remain public in this repository.
+No website catalog entries need editing. The build reads every discoverable `SKILL.md`, validates YAML and unique names, and derives categories, descriptions, source links, counts, filters, and install commands. Optional `metadata.display-name` overrides the automatically formatted title. Internal skills (`metadata.internal: true`) are excluded from the public catalog, following the CLI's default discovery behavior; their files remain public in this repository.
 
 ## Website
 
