@@ -9,10 +9,10 @@ web
 People browsing David Niessen's reusable AI skills and installing them into compatible agents.
 
 ## Product Purpose
-A public GitHub repository named `skills`, with a GitHub Pages catalog and installation through `npx skills`.
+A public GitHub repository named `skills`, with a GitHub Pages catalog and installation through the Claude Code plugin marketplace (`.claude-plugin/marketplace.json`, one plugin per category) or `npx skills`.
 
 ## Capabilities and Constraints
-The supplied Lexicon beatgrid repair skill is the initial collection. Names, descriptions, categories, source links, and install commands are resolved from skill files and their directories. Group skills by domain, beginning with `skills/dj/lexicon-beatgrid-repair/`. Keep the supplied skill content intact. Publishing and adding future skills must not require hand-maintaining a second catalog.
+The supplied Lexicon beatgrid repair skill is the initial collection. Names, descriptions, categories, source links, and install commands are resolved from skill files and their directories. Group skills by domain, beginning with `skills/dj/lexicon-beatgrid-repair/`. Keep the supplied skill content intact. Publishing and adding future skills must not require hand-maintaining a second catalog. The marketplace manifest is the one exception: Claude Code reads it directly, so each new skill is listed in its category plugin, and tests and the build fail when it drifts.
 
 ## Brand Commitments
 Very clean, minimal, modern, flat black and dark gray with glassmorphism, as requested.

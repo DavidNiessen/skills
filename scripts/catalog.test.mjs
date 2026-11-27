@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { discoverSkills, escapeHTML } from './catalog.mjs';
+import { attachPlugins, discoverSkills, escapeHTML } from './catalog.mjs';
 
 async function fixture(t) {
   const root = await mkdtemp(path.join(os.tmpdir(), 'skills-catalog-'));
@@ -50,4 +50,14 @@ test('hides internal skills and follows CLI nesting and shadowing rules', async 
 });
 test('escapes metadata before embedding it in HTML and attributes', () => {
   assert.equal(escapeHTML('<script a="x">&\'</script>'), '&lt;script a=&quot;x&quot;&gt;&amp;&#39;&lt;/script&gt;');
+});
+test('pairs skills with their Claude Code plugin and rejects unlisted skills', async t => {
+  const f = await fixture(t);
+  await f.add('dj/repair', '---\nname: beat-repair\ndescription: Repair\n---\n');
+  const skills = await discoverSkills(f.root, 'owner/repo');
+  const marketplace = { name: 'owner-skills', plugins: [{ name: 'dj', skills: ['./skills/dj/repair/'] }] };
+  const [skill] = attachPlugins(skills, marketplace);
+  assert.equal(skill.plugin, 'dj');
+  assert.equal(skill.claudeCommand, '/plugin install dj@owner-skills');
+  assert.throws(() => attachPlugins(skills, { name: 'owner-skills', plugins: [] }), /not listed/);
 });

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "davidniessen-skills",
+  "owner": {
+    "name": "David Nießen",
+    "url": "https://github.com/DavidNiessen"
+  },
+  "metadata": {
+    "description": "Reusable AI skills by David Nießen, grouped into one plugin per category."
+  },
+  "plugins": [
+    {
+      "name": "dev",
+      "source": "./",
+      "description": "Developer workflow skills: open-source readiness, release pipelines and animated GitHub READMEs.",
+      "author": { "name": "David Nießen" },
+      "homepage": "https://davidniessen.github.io/skills/",
+      "repository": "https://github.com/DavidNiessen/skills",
+      "license": "MIT",
+      "category": "development",
+      "strict": false,
+      "skills": [
+        "./skills/dev/open-source-ready",
+        "./skills/dev/readme-studio",
+        "./skills/dev/release-pipeline"
+      ]
+    },
+    {
+      "name": "dj",
+      "source": "./",
+      "description": "DJ library skills for Lexicon: beatgrid repair, phrase-based cue points and metadata cleanup.",
+      "author": { "name": "David Nießen" },
+      "homepage": "https://davidniessen.github.io/skills/",
+      "repository": "https://github.com/DavidNiessen/skills",
+      "license": "MIT",
+      "category": "productivity",
+      "strict": false,
+      "skills": [
+        "./skills/dj/lexicon-beatgrid-repair",
+        "./skills/dj/lexicon-cuepoints",
+        "./skills/dj/lexicon-library-cleanup"
+      ]
+    }
+  ]
+}

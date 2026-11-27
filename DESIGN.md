@@ -10,4 +10,6 @@ A quiet, monochrome reading surface. The catalog and install command are the foc
 - Responsive single-column reading order. Search and category filters wrap on narrow screens; commands scroll horizontally without widening the page.
 - One brief entry animation on the install panel; honor reduced motion. All content is present without JavaScript; scripts enhance search, category filtering, and copying.
 
+- The install panel has two tabs, Claude Code (marketplace plus one plugin per category) and skills CLI, and remembers the choice. Without JavaScript both methods are listed in sequence. Each skill shows both install commands.
+
 The primary surface is a Read catalog with an Operate installation action. Success is finding a skill, understanding its scope, and copying the correct command.

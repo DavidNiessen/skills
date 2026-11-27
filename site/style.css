@@ -4,3 +4,17 @@
 @media(min-width:1500px){.shell{max-width:1120px}.intro{padding-top:115px}}
 @media(max-width:760px){.shell{width:calc(100% - 48px)}.nav{height:74px}.intro{padding-block:66px 60px}.intro h1{font-size:clamp(34px,6.6vw,48px)}.intro-copy>p{font-size:15px}.install-panel{padding:20px;margin-top:35px}.collection-top{align-items:flex-start;flex-direction:column;gap:22px}.search{width:100%}.collection-tools{margin-top:20px}.skill{gap:15px;padding-block:25px}.skill-symbol{width:36px;height:36px;border-radius:10px}.skill h3{font-size:16px}.source-link{width:30px}.about{gap:25px;padding-block:56px;grid-template-columns:1fr}.about h2{font-size:25px}.footer{flex-direction:column;gap:8px}.footer>div{gap:22px}.terminal-label{display:none}.command-line{gap:8px}.command-line code{font-size:11px}.skill-install{margin-left:-51px}.skill-install code{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+.install-tabs{display:flex;gap:3px;padding:3px;border:1px solid #ffffff14;border-radius:10px;background:#0b0b0c66}
+.install-tabs button{min-height:36px;padding:6px 12px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--muted);font-size:12px}
+.install-tabs button:hover{color:white}
+.install-tabs button[aria-selected=true]{border-color:#ffffff1a;background:#ffffff12;color:#f3f3f4}
+.install-option+.install-option{margin-top:22px;padding-top:18px;border-top:1px solid #ffffff12}
+.install-option-title{font-size:12px;font-weight:600;color:var(--muted);margin:14px 0 0}
+.tabs-ready .install-option+.install-option{margin-top:0;padding-top:0;border-top:0}
+.tabs-ready .install-option-title{display:none}
+.install-option .command-line+.command-line{margin-top:0}
+.install-option>p{font-size:12px;color:var(--muted);margin:10px 0 0}
+.install-label{font-size:11px;font-weight:600;color:#c4c4cb;margin:12px 0 0}
+.install-label span{font-weight:400;color:var(--muted)}
+.install-label+.skill-install{margin-top:6px}
+@media(max-width:760px){.panel-top{flex-wrap:wrap}.install-label{margin-left:-51px}}
