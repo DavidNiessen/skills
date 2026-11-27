@@ -38,3 +38,29 @@ document.querySelectorAll('[data-copy]').forEach(button => button.addEventListen
   } catch { announce('Copy unavailable. Select and copy the command above.'); }
   finally { button.disabled = false; }
 }));
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(tab, focus = false) {
+  for (const other of tabs) {
+    const selected = other === tab;
+    other.setAttribute('aria-selected', String(selected));
+    other.tabIndex = selected ? 0 : -1;
+    document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+  }
+  if (focus) tab.focus();
+  try { localStorage.setItem('install-method', tab.id); } catch {}
+}
+if (tabs.length) {
+  document.querySelector('.install-panel').classList.add('tabs-ready');
+  let saved = null;
+  try { saved = localStorage.getItem('install-method'); } catch {}
+  selectTab(tabs.find(tab => tab.id === saved) ?? tabs[0]);
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', event => {
+      const next = { ArrowRight: index + 1, ArrowLeft: index - 1, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      selectTab(tabs[(next + tabs.length) % tabs.length], true);
+    });
+  });
+}
