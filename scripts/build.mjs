@@ -1,13 +1,16 @@
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { discoverSkills, escapeHTML as e } from './catalog.mjs';
+import { attachPlugins, discoverSkills, escapeHTML as e } from './catalog.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const repository = process.env.GITHUB_REPOSITORY || 'DavidNiessen/skills';
-const skills = await discoverSkills(path.join(root, 'skills'), repository);
+const marketplace = JSON.parse(await readFile(path.join(root, '.claude-plugin/marketplace.json'), 'utf8'));
+const skills = attachPlugins(await discoverSkills(path.join(root, 'skills'), repository), marketplace);
 const repositoryURL = `https://github.com/${repository}`;
 const command = `npx skills add ${repository}`;
+const marketplaceCommand = `/plugin marketplace add ${repository}`;
+const plugins = marketplace.plugins.map(plugin => ({ name: plugin.name, description: plugin.description, command: `/plugin install ${plugin.name}@${marketplace.name}`, skills: skills.filter(skill => skill.plugin === plugin.name).map(skill => skill.name) }));
 const categories = [...new Map(skills.map(skill => [skill.category, skill.categoryLabel])).entries()];
 const rows = skills.map(skill => `<article class="skill" data-name="${e(skill.name)}" data-category="${e(skill.category)}" data-search="${e([skill.name, skill.title, skill.description, skill.categoryLabel].join(' ').toLowerCase())}">
   <div class="skill-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></svg></div>
@@ -35,6 +38,6 @@ await cp(path.join(root, 'site'), dist, { recursive: true });
 await cp(path.join(root, 'node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2'), path.join(dist, 'fonts/manrope-latin.woff2'));
 await cp(path.join(root, 'node_modules/@fontsource-variable/manrope/LICENSE'), path.join(dist, 'fonts/OFL.txt'));
 await writeFile(path.join(dist, 'index.html'), html);
-await writeFile(path.join(dist, 'skills.json'), JSON.stringify({ repository, skills }, null, 2) + '\n');
+await writeFile(path.join(dist, 'skills.json'), JSON.stringify({ repository, marketplace: { name: marketplace.name, command: marketplaceCommand, plugins }, skills }, null, 2) + '\n');
 await writeFile(path.join(dist, '.nojekyll'), '');
 console.log(`Built ${skills.length} skills in ${categories.length} categories → dist/`);

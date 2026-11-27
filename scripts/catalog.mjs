@@ -46,3 +46,17 @@ export async function discoverSkills(root, repository) {
   await walk(root);
   return skills.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+// Pair each skill with the Claude Code plugin that ships it, from .claude-plugin/marketplace.json.
+export function attachPlugins(skills, marketplace) {
+  if (!marketplace || typeof marketplace.name !== 'string' || !Array.isArray(marketplace.plugins)) throw new Error('Invalid marketplace manifest');
+  const pluginFor = new Map();
+  for (const plugin of marketplace.plugins) {
+    for (const location of plugin.skills ?? []) pluginFor.set(location.replace(/^\.\//, '').replace(/\/+$/, ''), plugin.name);
+  }
+  return skills.map(skill => {
+    const plugin = pluginFor.get(skill.path.replace(/\/SKILL\.md$/, ''));
+    if (!plugin) throw new Error(`Skill ${skill.name} is not listed in .claude-plugin/marketplace.json`);
+    return { ...skill, plugin, claudeCommand: `/plugin install ${plugin}@${marketplace.name}` };
+  });
+}
