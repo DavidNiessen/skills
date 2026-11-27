@@ -52,6 +52,10 @@ rs init --login <login> --preset <id> --workflow                   # profile
 - **Projects:** a published library (`oss-library`), a CLI (`cli-tool`), a Python package (`python-package`), a product or app (`product-launch`), a quiet project (`minimal-oss`), or a maintainer's overview (`maintainers-dashboard`).
 - **Profiles:** a data-heavy look (`command-center`, `data-nerd`), something calm (`minimal-paper`, `nordic`), a portfolio (`portfolio`) or a writer's profile (`writer`).
 
+Check the generated workflow's `concurrency` block before committing it.
+- **The problem:** the template (through v1.2.0) puts every run in one group, `readme-studio`, with `cancel-in-progress: true`. The workflow also runs on pushes to any branch. So a push to another branch (a pull request, Dependabot) cancels the run on the default branch, and the README is never published.
+- **The fix:** scope the group per ref with `group: readme-studio-${{ github.ref }}`, and keep `cancel-in-progress: true`.
+
 ## 4. Tailor the config
 
 Edit `readme.config.json` directly. The essentials:
@@ -110,6 +114,7 @@ Never edit the generated `README.md` by hand: the next run overwrites it.
 ## Troubleshooting
 
 - **Broken images on GitHub:** the workflow hasn't run yet, or failed. Check the Actions tab and the job summary.
+- **Runs on the default branch end as "cancelled" and the README never changes:** the workflow's concurrency group is shared across branches. Scope it per ref (see step 3), then run the workflow once on the default branch.
 - **Images don't update:** GitHub's image proxy caches for a few minutes. The schedule also stops after 60 days without repository activity; re-enable it in the Actions tab.
 - **Numbers look off without a token:** the public calendar and REST API are used, so some totals (private contributions, exact PR counts) need `PROFILE_TOKEN`.
 - **Docs and FAQ:** https://readme.niessen.dev/#/docs
