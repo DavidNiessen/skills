@@ -90,7 +90,7 @@ No website catalog entries need editing. The build reads every discoverable `SKI
 
 ## Website
 
-A small static site with self-hosted Manrope typography, a dark glass install panel, accessible search, category filters, and clipboard controls. The full catalog is rendered into HTML, so content and installation instructions remain readable without JavaScript. Search and copy controls are progressive enhancements. No GitHub API token, runtime API calls, or manually maintained skill list is needed.
+A small static site with self-hosted Manrope typography, a dark glass install panel with Claude Code and skills CLI tabs, accessible search, category filters, and clipboard controls. The full catalog is rendered into HTML, so content and installation instructions remain readable without JavaScript. Search and copy controls are progressive enhancements. No GitHub API token, runtime API calls, or manually maintained skill list is needed.
 
 ```sh
 npm ci
@@ -99,7 +99,7 @@ npm run preview
 # http://localhost:4173
 ```
 
-`dist/skills.json` provides the generated machine-readable catalog. The `GITHUB_REPOSITORY` environment variable supplies the repository identity in Actions. When reusing this project in a different repository, update the local fallback in `scripts/build.mjs` and README links. The workflow deploys pushes to `main`; pull requests run tests and a build without publishing.
+`dist/skills.json` provides the generated machine-readable catalog, including each skill's Claude Code plugin and the marketplace's install commands. Plugin assignments come from `.claude-plugin/marketplace.json`, and the build fails if a public skill is missing from it. The `GITHUB_REPOSITORY` environment variable supplies the repository identity in Actions. When reusing this project in a different repository, update the local fallback in `scripts/build.mjs` and README links. The workflow deploys pushes to `main`; pull requests run tests and a build without publishing.
 
 For a fork or fresh repository, enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once. See [GitHub's Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
