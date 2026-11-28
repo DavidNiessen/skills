@@ -12,26 +12,34 @@ const command = `npx skills add ${repository}`;
 const marketplaceCommand = `/plugin marketplace add ${repository}`;
 const plugins = marketplace.plugins.map(plugin => ({ name: plugin.name, description: plugin.description, command: `/plugin install ${plugin.name}@${marketplace.name}`, skills: skills.filter(skill => skill.plugin === plugin.name).map(skill => skill.name) }));
 const categories = [...new Map(skills.map(skill => [skill.category, skill.categoryLabel])).entries()];
-const rows = skills.map(skill => `<article class="skill" data-name="${e(skill.name)}" data-category="${e(skill.category)}" data-search="${e([skill.name, skill.title, skill.description, skill.categoryLabel].join(' ').toLowerCase())}">
-  <div class="skill-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></svg></div>
-  <div class="skill-body"><div class="skill-heading"><h3><a href="${e(skill.sourceURL)}">${e(skill.title)}</a></h3><span class="category-tag">${e(skill.categoryLabel)}</span></div>
+const tones = new Map(categories.map(([value], index) => [value, index % 4]));
+const rows = skills.map((skill, index) => `<article class="skill" data-reveal data-color="${index % 5}" data-tone="${tones.get(skill.category)}" data-name="${e(skill.name)}" data-category="${e(skill.category)}" data-search="${e([skill.name, skill.title, skill.description, skill.categoryLabel].join(' ').toLowerCase())}">
+  <span class="tape" aria-hidden="true"></span>
+  <div class="skill-heading"><span class="stamp">${e(skill.categoryLabel)}</span></div>
+  <h3><a href="${e(skill.sourceURL)}">${titleWithArrow(skill.title)}</a></h3>
   <p>${e(skill.description)}</p>
-  <details><summary>Install this skill <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg></summary>
+  <details><summary>Install this skill <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3.5 6 4.5 4.5L12.5 6"/></svg></summary>
+    <div class="details-body">
     <p class="install-label">Claude Code <span>· installs the ${e(pluginLabel(skill.plugin))} plugin, after adding the marketplace</span></p>
     <div class="skill-install"><code>${e(skill.claudeCommand)}</code><button class="icon-button" data-copy="${e(skill.claudeCommand)}" aria-label="Copy Claude Code install command for ${e(skill.title)}">${copyIcon()}</button></div>
     <p class="install-label">skills CLI</p>
     <div class="skill-install"><code>${e(skill.command)}</code><button class="icon-button" data-copy="${e(skill.command)}" aria-label="Copy skills CLI install command for ${e(skill.title)}">${copyIcon()}</button></div>
     <a class="text-link" href="${e(skill.sourceURL)}">Read SKILL.md <span aria-hidden="true">↗</span></a>
-  </details></div>
-  <a class="source-link" href="${e(skill.sourceURL)}" aria-label="View ${e(skill.title)} on GitHub"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></a>
+    </div>
+  </details>
 </article>`).join('\n');
+function titleWithArrow(title) {
+  const words = title.split(' ');
+  const last = words.pop();
+  return `${words.length ? e(words.join(' ')) + ' ' : ''}<span class="nowrap">${e(last)}<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span>`;
+}
 function pluginLabel(name) { return categories.find(([value]) => value === name)?.[1] ?? name; }
-function copyIcon() { return '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>'; }
+function copyIcon() { return '<svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 8.5c3.6-.4 7.4-.3 11 .2.4 3.8.3 7.6-.2 11.4-3.7.3-7.4.4-11 0-.4-3.9-.3-7.8.2-11.6Z"/><path d="M15.5 5.5c0-.6-.1-1.2-.3-1.7-3.5-.3-7-.2-10.6.2-.4 3.6-.4 7.2 0 10.8.6.2 1.3.3 2 .3"/></svg><svg class="check-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 12.5c2 1.6 3.6 3.5 5 5.5 3-5.3 6.3-9.7 10-13"/></svg>'; }
 const replacements = {
   REPOSITORY: e(repository), REPOSITORY_URL: e(repositoryURL), OWNER: e(repository.split('/')[0]),
   COMMAND: e(command), COUNT: String(skills.length), SKILL_WORD: skills.length === 1 ? 'skill' : 'skills',
   SKILLS: rows,
-  FILTERS: categories.map(([value, label]) => `<button type="button" class="filter" data-category-filter="${e(value)}" aria-pressed="false">${e(label)}</button>`).join(''),
+  FILTERS: categories.map(([value, label]) => `<button type="button" class="filter" data-tone="${tones.get(value)}" data-category-filter="${e(value)}" aria-pressed="false">${e(label)}</button>`).join(''),
   MARKETPLACE_COMMAND: e(marketplaceCommand),
   PLUGIN_COMMANDS: plugins.map(plugin => `<div class="command-line"><span aria-hidden="true" class="prompt">&gt;</span><code>${e(plugin.command)}</code><button class="icon-button" data-copy="${e(plugin.command)}" aria-label="Copy command that installs the ${e(pluginLabel(plugin.name))} plugin">${copyIcon()}</button></div>`).join('\n          '),
   COPY_ICON: copyIcon()
