@@ -41,8 +41,9 @@ html = html.replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => { if (!(key in replacement
 const dist = path.join(root, 'dist');
 await mkdir(path.join(dist, 'fonts'), { recursive: true });
 await cp(path.join(root, 'site'), dist, { recursive: true });
-await cp(path.join(root, 'node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2'), path.join(dist, 'fonts/manrope-latin.woff2'));
-await cp(path.join(root, 'node_modules/@fontsource-variable/manrope/LICENSE'), path.join(dist, 'fonts/OFL.txt'));
+const fonts = [['kalam', 'kalam-latin-400-normal.woff2', 'kalam-400.woff2'], ['kalam', 'kalam-latin-700-normal.woff2', 'kalam-700.woff2'], ['patrick-hand', 'patrick-hand-latin-400-normal.woff2', 'patrick-hand-400.woff2']];
+for (const [family, file, target] of fonts) await cp(path.join(root, 'node_modules/@fontsource', family, 'files', file), path.join(dist, 'fonts', target));
+for (const family of new Set(fonts.map(([family]) => family))) await cp(path.join(root, 'node_modules/@fontsource', family, 'LICENSE'), path.join(dist, 'fonts', `${family}-OFL.txt`));
 await writeFile(path.join(dist, 'index.html'), html);
 await writeFile(path.join(dist, 'skills.json'), JSON.stringify({ repository, marketplace: { name: marketplace.name, command: marketplaceCommand, plugins }, skills }, null, 2) + '\n');
 await writeFile(path.join(dist, '.nojekyll'), '');
