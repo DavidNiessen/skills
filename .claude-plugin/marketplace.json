@@ -12,7 +12,7 @@
     {
       "name": "dev",
       "source": "./",
-      "description": "Developer workflow skills: open-source readiness, release pipelines and animated GitHub READMEs.",
+      "description": "Developer workflow skills: open-source readiness, release pipelines, animated GitHub READMEs and finding a free project name.",
       "author": { "name": "David Nießen" },
       "homepage": "https://davidniessen.github.io/skills/",
       "repository": "https://github.com/DavidNiessen/skills",
@@ -20,6 +20,7 @@
       "category": "development",
       "strict": false,
       "skills": [
+        "./skills/dev/name-finder",
         "./skills/dev/open-source-ready",
         "./skills/dev/readme-studio",
         "./skills/dev/release-pipeline"
