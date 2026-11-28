@@ -93,7 +93,7 @@ No website catalog entries need editing. The build reads every discoverable `SKI
 
 ## Website
 
-A small static site with self-hosted Manrope typography, a dark glass install panel with Claude Code and skills CLI tabs, accessible search, category filters, and clipboard controls. The full catalog is rendered into HTML, so content and installation instructions remain readable without JavaScript. Search and copy controls are progressive enhancements. No GitHub API token, runtime API calls, or manually maintained skill list is needed.
+A small static site with a colorful hand-drawn paper look in light and dark mode: self-hosted Kalam and Patrick Hand typography, a spiral-notebook install panel with Claude Code and skills CLI tabs, pastel skill cards, a pencil mascot, accessible search, category filters, and clipboard controls with confetti. The full catalog is rendered into HTML, so content and installation instructions remain readable without JavaScript. Search and copy controls are progressive enhancements. No GitHub API token, runtime API calls, or manually maintained skill list is needed.
 
 ```sh
 npm ci
@@ -108,4 +108,4 @@ For a fork or fresh repository, enable **Settings → Pages → Build and deploy
 
 ## License
 
-[MIT](LICENSE). Manrope is distributed under the [SIL Open Font License](https://github.com/sharanda/manrope/blob/master/OFL.txt); a copy is included with the deployed font.
+[MIT](LICENSE). Kalam and Patrick Hand are distributed under the SIL Open Font License; copies are included with the deployed fonts.

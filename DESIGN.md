@@ -1,14 +1,16 @@
 # Skills catalog
 
-A quiet, monochrome reading surface. The catalog and install command are the focal points.
+A colorful, hand-drawn paper sketchbook. The catalog and install commands stay the focal points; the doodles and animations add play without hiding content.
 
-- Background #0b0b0c; raised surface #141416; text #f3f3f4; secondary #a2a2aa; border #303034.
-- Self-hosted Manrope variable font. Code uses the system monospace font.
-- Generous outer margins, compact navigation, a large two-line heading, and a thinly divided skill list. No placeholder skills or fabricated activity.
-- Glass belongs to the install panel and sticky header: translucent charcoal, fine white edge, backdrop blur, and a restrained tonal reflection.
-- 12–16px panel radii; 8px controls; 44px minimum interactive targets. Focus rings remain visible.
-- Responsive single-column reading order. Search and category filters wrap on narrow screens; commands scroll horizontally without widening the page.
-- One brief entry animation on the install panel; honor reduced motion. All content is present without JavaScript; scripts enhance search, category filtering, and copying.
+- Light mode is warm cream paper (#fff4dc) with a dot grid and purple-ink text (#2b2440). Dark mode is deep indigo paper (#1e1b33) with chalk-cream text (#fdf6e3). Both are full palettes, never plain black and white.
+- Accent markers: coral, sky blue, mint, lilac and highlighter yellow. Skill cards rotate through five pastel paper colors (deep jewel tones in dark mode); categories get a colored stamp and matching filter chip.
+- Self-hosted Kalam (headings, labels) and Patrick Hand (body). Code uses the system monospace font.
+- Hand-drawn shapes: 2.5px ink outlines, wobbly asymmetric radii, hard offset shadows, washi tape, a spiral notebook for the install panel and a pinned sticky note for the about section. Buttons press into their shadow.
+- Penny, a pencil mascot, follows the pointer with her eyes, blinks, and gives tips when poked.
+- Motion: highlighter and scribble underline draw in, cards pop in on scroll and tilt toward the pointer, filtering animates cards into place, copying bursts paper confetti with a sticker toast, the theme switch reveals the new theme in a circle from the toggle, and the mouse leaves a fading pencil trail in the hero. All of it is disabled under reduced motion.
+- 44px minimum interactive targets and dashed, visible focus rings. Text meets 4.5:1 contrast in both themes.
+- Responsive single-column reading order on small screens; commands scroll horizontally without widening the page.
+- Theme follows the system until the toggle is used, then the choice is remembered. All content is present without JavaScript; scripts enhance theming, search, category filtering, copying and animation.
 
 - The install panel has two tabs, Claude Code (marketplace plus one plugin per category) and skills CLI, and remembers the choice. Without JavaScript both methods are listed in sequence. Each skill shows both install commands.
 
