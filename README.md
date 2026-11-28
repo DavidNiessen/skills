@@ -24,7 +24,7 @@ On Claude Code 2.1.275 or later, one line does both:
 
 | Plugin | Skills |
 | --- | --- |
-| `dev` | `open-source-ready`, `readme-studio`, `release-pipeline` |
+| `dev` | `name-finder`, `open-source-ready`, `readme-studio`, `release-pipeline` |
 | `dj` | `lexicon-beatgrid-repair`, `lexicon-cuepoints`, `lexicon-library-cleanup` |
 
 Plugin skills are namespaced, for example `/dev:release-pipeline`. Update with `/plugin marketplace update davidniessen-skills`. Plugins carry no fixed version, so every new commit on `main` is an update.
@@ -54,6 +54,9 @@ Requires Node.js and npm. The [skills CLI documentation](https://github.com/verc
 ```text
 skills/
   dev/
+    name-finder/
+      SKILL.md
+      scripts/
     open-source-ready/
       SKILL.md
       templates/
